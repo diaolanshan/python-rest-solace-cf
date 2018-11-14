@@ -14,11 +14,12 @@ port = int(os.getenv('VCAP_APP_PORT', 80))
 
 queue_name = 'python-rest-solace-queue'
 
+# Read the environment variables.
 vcap_services = json.loads(os.environ['VCAP_SERVICES'])
 services = vcap_services.keys()
 for service in services:
     if 'solace-pubsub' in vcap_services[service][0]['tags']:
-        # Use the first 'rabbitmq' service.
+        # Use the first 'solace' services if have many.
         management_host = 'http://' + vcap_services[service][0]['credentials']['activeManagementHostname']
         management_username = vcap_services[service][0]['credentials']['managementUsername']
         management_password = vcap_services[service][0]['credentials']['managementPassword']
