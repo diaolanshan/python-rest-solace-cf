@@ -10,7 +10,6 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 api = Api(app)
 
-
 port = int(os.getenv('VCAP_APP_PORT', 80))
 
 queue_name = 'python-rest-solace-queue'
@@ -53,24 +52,29 @@ def define_queue():
         response.reason)
 
 
-class Solace(Resource):
-    last_message = ''
-    def put(self):
+class SolaceProducer(Resource):
+    def post(self):
         '''
-        Post a message to the solace pubsub+
-
+        POST a message to the solace pubsub+
+        url is http://solacepubsub+/queue/{queue_name} or http://solacepubsub+/topic/topic_name
         :return: return a success message if got 200 response from the vmr, otherwise, return a error message associated
         with a detailed reason of that.
         '''
         url = restUris + '/queue/' + queue_name
         response = requests.post(url=url,
-                                 auth=HTTPBasicAuth(client_username, client_password), json={'message':'I a just a test message'})
+                                 auth=HTTPBasicAuth(client_username, client_password),
+                                 json={'message': 'I a just a test message'})
         return 'Message published successfully' if response.status_code == 200 else 'Error while publish message, reason: '.format(
             response.reason)
+
+
+class SolaceConsumer(Resource):
+    last_message = ''
 
     def post(self):
         '''
         Act as the solace consumer, listen to the push request from solace.
+        And we assume that the messages are in json format.
         :return:
         '''
         data = request.get_json()
@@ -88,7 +92,8 @@ class Solace(Resource):
         return self.last_message
 
 
-api.add_resource(Solace, '/rest/solace/message')
+api.add_resource(SolaceProducer, '/rest/solace/pub/message')
+api.add_resource(SolaceConsumer, '/rest/solace/sub/message')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=False)

@@ -15,9 +15,9 @@ flask-restful
 **How to use it:**
 
 - Download and push the app to the cloud foundry platform.
-- Provision and solace instance and bind to the app.
+- Provision an solace instance from the marketplace and bind to the app.
 - Restart/Restage the app.
-- http://{link_to_app}/rest/solace/queue in the brower in order to create an pubsub+ queue.
+- Issue http://{link_to_app}/rest/solace/queue in the brower in order to create an pubsub+ queue.
 - Configure the rest delivery point in solace pubsub+
   1. Navigate to 'REST Delivery Points' of the SolAdmin.
   2. Select view 'REST Delivery Points', and click the plus to create:
@@ -38,13 +38,13 @@ flask-restful
   5. Check the overview of the rdp in the 'REST Delivery Points' view, all should 'UP'
    ![Consumer](images/overview.png)
    
-**How to test it:**
+**How to verify it:**
 
-The app contains to url,
+The app contains two urls,
 
-- Do a 'PUT' request to http://{link_to_app}/rest/solace/message, this will publish a message to pubsub+
+- Do a 'POST' request to http://{link_to_app}/rest/solace/pub/message, this will publish a message to pubsub+
 - Check the application log, there should be something like:
 ```text
 Got message:{'message': 'I am a test'}
 ```
-- Or issue a 'GET' request to http://{link_to_app}/rest/solace/message
+- Or issue a 'GET' request to http://{link_to_app}/rest/solace/sub/message
